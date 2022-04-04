@@ -27,12 +27,46 @@ class accountingLine:
         self.VAT = VAT
         self.netto = netto
     def fromCSV_String(self,string):
-        #        ";;<DATE><DATE><DATE><DATE><DATE>;<Label>;;<field1>;<total><total> ; "
-        regex = "^;;([0-9]{2}\.[0-9]{2}\.[0-9]{4});([^;]*);;([0-9]*);([0-9]*[,0-9]*);.*$"
+        regexDate = "([0-9]{2}\.[0-9]{2}\.[0-9]{4})"
+        regexLabel = "([^;]*)"
+        regexField1 = "([0-9]*)"
+        regexTotal = "([0-9,]*)"
+        regexAccount = "([^;])"
+        #regexRefAcc = "([^;])"
+        #regexBrutto = "([0-9,]*)"
+        #regexVAT = "([0-9,]*)"
+        #regexNetto = "([0-9,]*)"
+        
+        #for debugging only 
+       #regexDate = "([^;]*)"
+       #regexLabel = "([^;]*)"
+       #regexField1 = "([^;]*)"
+       #regexTotal = "([^;]*)"
+       #regexAccount = "([^;]*)"
+        regexRefAcc = "([^;]*)"
+        regexBrutto = "([^;]*)"
+        regexVAT = "([^;]*)"
+        regexNetto = "([^;]*)"
+        regex = "^;;" + \
+                regexDate + ";"+\
+                regexLabel+";;"+\
+                regexField1+";"+\
+                regexTotal+";"+\
+                regexAccount+";"+\
+                regexRefAcc+";"+\
+                regexBrutto+";"+\
+                regexVAT+";;"+\
+                regexNetto+\
+                ".*$"
         self.date = re.compile(regex).match(string).group(1)
         self.label = re.compile(regex).match(string).group(2)
         self.field1 = re.compile(regex).match(string).group(3)
         self.total = re.compile(regex).match(string).group(4)
+        self.account = re.compile(regex).match(string).group(5)
+        self.ref_account = re.compile(regex).match(string).group(6)
+        self.brutto = re.compile(regex).match(string).group(7)
+        self.VAT = re.compile(regex).match(string).group(8)
+        self.netto = re.compile(regex).match(string).group(9)
 
 def completify(infileName, outfileName):
     infile = open(infileName,"r")
@@ -48,8 +82,24 @@ def completify(infileName, outfileName):
         90.12,\
         34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
     for line in linesOfInfile:
-        currentAccountingLine = accountingLine.fromCSV_String(line) # create a new accountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
-        
+        currentAccountingLine = accountingLine("01.01.22",\
+            "label",\
+            123456,\
+            12.34,\
+            "account",\
+            "ref_account",\
+            56.78,\
+            90.12,\
+            34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
+        currentAccountingLine.fromCSV_String(line) # fill the previously created currentaccountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
+        if currentAccountingLine.date == "":
+            currentAccountingLine.date = previousAccountingLine.date
+        else:
+            pass; 
+        if currentAccountingLine.label == "":
+            currentAccountingLine.label = previousAccountingLine.label
+        else:
+            pass;
 
 def main():
     if(len(sys.argv) != 3):
