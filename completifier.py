@@ -26,6 +26,19 @@ class accountingLine:
         self.brutto = brutto
         self.VAT = VAT
         self.netto = netto
+    def toCSV_String(self):
+        returnValue = ";;"
+        returnValue += self.date + ";"
+        returnValue += self.label + ";;"
+        returnValue += self.field1 + ";"
+        returnValue += self.total + ";"
+        returnValue += self.account + ";"
+        returnValue += self.ref_account + ";"
+        returnValue += self.brutto + ";"
+        returnValue += self.VAT + ";;"
+        returnValue += self.netto 
+        return returnValue
+        
     def fromCSV_String(self,string):
         regexDate = "([0-9]{2}\.[0-9]{2}\.[0-9]{4})"
         regexLabel = "([^;]*)"
@@ -92,14 +105,22 @@ def completify(infileName, outfileName):
             90.12,\
             34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
         currentAccountingLine.fromCSV_String(line) # fill the previously created currentaccountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
-        if currentAccountingLine.date == "":
+        if (
+                    (currentAccountingLine.date != "")
+                and (currentAccountingLine.label != "")
+                and (currentAccountingLine.field1 != "")
+           ):
+            # is start of new accounting line... the old line must be replaced with this one
+            previousAccountingLine = currentAccountingLine
+            # also there is obviously nothing to complete here
+        else:
+            # line with decomposition of existing accounting line
+            # information from above lines can be reused
             currentAccountingLine.date = previousAccountingLine.date
-        else:
-            pass; 
-        if currentAccountingLine.label == "":
             currentAccountingLine.label = previousAccountingLine.label
-        else:
-            pass;
+            currentAccountingLine.field1 = previousAccountingLine.field1
+            currentAccountingLine.total = previousAccountingLine.total
+        outfile.write(currentAccountingLine.toCSV_String())
 
 def main():
     if(len(sys.argv) != 3):
