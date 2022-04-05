@@ -32,17 +32,17 @@ class accountingLine:
         regexField1 = "([0-9]*)"
         regexTotal = "([0-9,]*)"
         regexAccount = "([^;])"
-        #regexRefAcc = "([^;])"
-        #regexBrutto = "([0-9,]*)"
-        #regexVAT = "([0-9,]*)"
-        #regexNetto = "([0-9,]*)"
+        regexRefAcc = "([^;])"
+        regexBrutto = "([0-9,]*)"
+        regexVAT = "([0-9,]*)"
+        regexNetto = "([0-9,]*)"
         
         #for debugging only 
-       #regexDate = "([^;]*)"
-       #regexLabel = "([^;]*)"
-       #regexField1 = "([^;]*)"
-       #regexTotal = "([^;]*)"
-       #regexAccount = "([^;]*)"
+        regexDate = "([^;]*)"
+        regexLabel = "([^;]*)"
+        regexField1 = "([^;]*)"
+        regexTotal = "([^;]*)"
+        regexAccount = "([^;]*)"
         regexRefAcc = "([^;]*)"
         regexBrutto = "([^;]*)"
         regexVAT = "([^;]*)"
@@ -71,7 +71,7 @@ class accountingLine:
 def completify(infileName, outfileName):
     infile = open(infileName,"r")
     outfile = open(outfileName, "w")
-    linesOfInfile = infile.readLines()
+    linesOfInfile = infile.readlines()
     previousAccountingLine = accountingLine("01.01.22",\
         "label",\
         123456,\
@@ -104,27 +104,27 @@ def completify(infileName, outfileName):
 def main():
     if(len(sys.argv) != 3):
         print("Calling convention: completifier.py infile outfile")
-    elif not os.path.isfile(sys.argv[2]):
-        print("infile not found")
+    elif not os.path.isfile(sys.argv[1]):
+        print("infile not found (was "+sys.argv[1]+")")
     else:
-        infile = sys.argv[2]
-        outfile = sys.argv[3]
+        infile = sys.argv[1]
+        outfile = sys.argv[2]
         completify(infile,outfile)
 
-#main() # use call to main in production anything else otherwise
+main() # use call to main in production anything else otherwise
 #Example for class definition and testing of the types
-line = accountingLine("01.01.22",\
-        "label",\
-        123456,\
-        12.34,\
-        "account",\
-        "ref_account",\
-        56.78,\
-        90.12,\
-        34.56)
-#print(line.netto);
-line.fromCSV_String(";;03.01.2022;Musterfrau, Marianne, Musterhausen, 17155/03.01.2022 (MED_ABG_0% );;171552;28,62;;;;;;")
-print(line.date)
-print(line.label)
-print(line.field1)
-print(line.total)
+#line = accountingLine("01.01.22",\
+#        "label",\
+#        123456,\
+#        12.34,\
+#        "account",\
+#        "ref_account",\
+#        56.78,\
+#        90.12,\
+#        34.56)
+##print(line.netto);
+#line.fromCSV_String(";;03.01.2022;Musterfrau, Marianne, Musterhausen, 17155/03.01.2022 (MED_ABG_0% );;171552;28,62;;;;;;")
+#print(line.date)
+#print(line.label)
+#print(line.field1)
+#print(line.total)
