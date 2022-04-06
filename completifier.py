@@ -50,16 +50,6 @@ class accountingLine:
         regexVAT = "([0-9,]*)"
         regexNetto = "([0-9,]*)"
         
-        #for debugging only 
-        regexDate = "([^;]*)"
-        regexLabel = "([^;]*)"
-        regexField1 = "([^;]*)"
-        regexTotal = "([^;]*)"
-        regexAccount = "([^;]*)"
-        regexRefAcc = "([^;]*)"
-        regexBrutto = "([^;]*)"
-        regexVAT = "([^;]*)"
-        regexNetto = "([^;]*)"
         regex = "^;;" + \
                 regexDate + ";"+\
                 regexLabel+";;"+\
