@@ -138,8 +138,17 @@ def main():
         pass
 
     if os.path.isfile(sys.argv[2]):
-        print("outfile would be overwritten, can not do that yet")
-        exit()
+        overwrite=input("Overwrite Outfile? (y/n) : ")
+        if (
+                (overwrite != "y")
+             and(overwrite != "n")
+           ):
+            print("invalid answer, terminating")
+            exit()
+        elif (overwrite == "y"):
+            pass
+        else:
+            print("Outfile exists and is not allowed to be overwritten, call again with different outfile")
     else:
         pass
 
