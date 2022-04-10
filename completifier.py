@@ -105,6 +105,7 @@ def completify(infileName, outfileName):
                     (currentAccountingLine.date != "")
                 and (currentAccountingLine.label != "")
                 and (currentAccountingLine.field1 != "")
+                and (currentAccountingLine.total != "")
            ):
             # is start of new accounting line... the old line must be replaced with this one
             previousAccountingLine = currentAccountingLine
