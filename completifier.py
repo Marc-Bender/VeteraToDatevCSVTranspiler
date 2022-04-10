@@ -104,9 +104,19 @@ def completify(infileName, outfileName):
         if (
                     (currentAccountingLine.date != "")
                 and (currentAccountingLine.label != "")
-                and (currentAccountingLine.field1 != "")
-                and (currentAccountingLine.total != "")
            ):
+            if (
+                        (currentAccountingLine.date == previousAccountingLine.date)
+                    and (
+                               (previousAccountingLine.label.__contains__(currentAccountingLine.label))
+                            or (currentAccountingLine.label.__contains__(previousAccountingLine.label))
+                        )
+               ):
+                # new line that is related to previous line
+                currentAccountingLine.field1 = previousAccountingLine.field1
+            else:
+                # completely new line
+                pass
             # is start of new accounting line... the old line must be replaced with this one
             previousAccountingLine = currentAccountingLine
             # also there is obviously nothing to complete here
