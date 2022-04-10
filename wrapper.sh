@@ -8,6 +8,7 @@ then
 	./preprocess.sh "$infile" > "pre_""$infile" &&
 	./completifier.py "pre_""$infile" "comp_""$infile" &&
 	rm "pre_""$infile" &&
+	./condenser.py "comp_""$infile" "cond_""$infile" &&
 	echo "Done" # place holder for next command
 else
 	echo "Infile does not exist"
