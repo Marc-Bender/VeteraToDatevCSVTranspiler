@@ -17,16 +17,8 @@ class accountingLine:
     VAT: float = 0.0
     netto: float = 0.0
     #define the constuctor which will construct such an object from the parameters in their correct data type (should be unused in production, apart from default initializations maybe)
-    def __init__(self,date, label, field1, total, account, ref_account, brutto, VAT, netto):
-        self.date = date
-        self.label = label
-        self.field1 = field1
-        self.total = total
-        self.account = account
-        self.ref_account = ref_account
-        self.brutto = brutto
-        self.VAT = VAT
-        self.netto = netto
+    def __init__(self):
+        pass
     def toCSV_String(self):
         returnValue = ";;"
         returnValue += self.date + ";"
@@ -100,36 +92,45 @@ def condense(infileName, outfileName):
     infile = open(infileName,"r")
     outfile = open(outfileName, "w")
     linesOfInfile = infile.readlines()
-    defaultInitializedAccountingLine = accountingLine("01.01.22",\
-        "label",\
-        123456,\
-        12.34,\
-        "account",\
-        "ref_account",\
-        56.78,\
-        90.12,\
-        34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
-    previousAccountingLine = accountingLine("01.01.22",\
-        "label",\
-        123456,\
-        12.34,\
-        "account",\
-        "ref_account",\
-        56.78,\
-        90.12,\
-        34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
-    lenghtOfFile = len(linesOfInfile)
-    for line in linesOfInfile:
-        currentAccountingLine = accountingLine("01.01.22",\
-            "label",\
-            123456,\
-            12.34,\
-            "account",\
-            "ref_account",\
-            56.78,\
-            90.12,\
-            34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
-        currentAccountingLine.fromCSV_String(line) # fill the previously created currentaccountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
+    defaultInitializedAccountingLine = accountingLine() 
+    previousAccountingLine = accountingLine() 
+    lengthOfFile = len(linesOfInfile)
+    for i in range(0,lengthOfFile):
+        currentAccountingLine = [accountingLine()] 
+        currentAccountingLine[0].fromCSV_String(linesOfInfile[i]) # fill the previously created currentaccountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
+        continueBuffering = 1
+        numOfBufferedLines = 0
+        while (
+                        (i<lengthOfFile-1)
+                    and (continueBuffering == 1)
+              ):
+            buffer = accountingLine()
+            buffer.fromCSV_String(linesOfInfile[i+1])
+            if (
+                        (buffer.date == currentAccountingLine[0].date)
+                   and  (buffer.label == currentAccountingLine[0].label)
+                   and  (buffer.field1 == currentAccountingLine[0].field1)
+               ):
+                currentAccountingLine.append(buffer)
+                numOfBufferedLines += 1
+                continueBuffering = 1
+                i += 1
+            else:
+                continueBuffering = 0
+
+        wasIndexConsidered = [0]*(numOfBufferedLines+1)
+        wasIndexConsidered[0] = 1 # the first entry is always considered since it will be kept if nothing else matches it
+        for j in range(0,numOfBufferedLines):
+            for k in range(j,numOfBufferedLines):
+                if (
+                            (j != k)
+                        and (wasIndexConsidered[k] == 0)
+                        and (currentAccountingLine[j].date == currentAccountingLine)
+                   ):
+                    pass #dummy
+                else:
+                    pass #dummy
+
         if (
                     (currentAccountingLine.date == previousAccountingLine.date)
                 and (currentAccountingLine.label == previousAccountingLine.label)
@@ -140,39 +141,9 @@ def condense(infileName, outfileName):
                     and (currentAccountingLine.account == previousAccountingLine.account)
                     and (currentAccountingLine.ref_account == previousAccountingLine.ref_account)
                ):
-                if (currentAccountingLine.brutto == ""):
-                    currentAccountingLine.brutto = 0.00
-                else:
-                    pass
-
-                if (previousAccountingLine.brutto == ""):
-                    previousAccountingLine.brutto = 0.00
-                else:
-                    pass
-
                 currentAccountingLine.brutto = currentAccountingLine.brutto + previousAccountingLine.brutto
                 
-                if (currentAccountingLine.VAT == ""):
-                    currentAccountingLine.VAT = 0.00
-                else:
-                    pass
-
-                if (previousAccountingLine.VAT == ""):
-                    previousAccountingLine.VAT = 0.00
-                else:
-                    pass
-
                 currentAccountingLine.VAT = currentAccountingLine.VAT + previousAccountingLine.VAT
-
-                if (currentAccountingLine.netto == ""):
-                    currentAccountingLine.netto = 0.00
-                else:
-                    pass
-
-                if (previousAccountingLine.netto == ""):
-                    previousAccountingLine.netto = 0.00
-                else:
-                    pass
 
                 currentAccountingLine.netto = currentAccountingLine.netto + previousAccountingLine.netto
                 previousAccountingLine = currentAccountingLine
