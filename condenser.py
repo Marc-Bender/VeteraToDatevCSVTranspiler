@@ -32,12 +32,12 @@ class accountingLine:
         returnValue += self.date + ";"
         returnValue += self.label + ";;"
         returnValue += str(self.field1) + ";"
-        returnValue += str(self.total) + ";"
+        returnValue += str(self.total).replace(".",",") + ";"
         returnValue += self.account + ";"
         returnValue += self.ref_account + ";"
-        returnValue += str(self.brutto) + ";"
-        returnValue += str(self.VAT) + ";;"
-        returnValue += str(self.netto)
+        returnValue += str(self.brutto).replace(".",",") + ";"
+        returnValue += str(self.VAT).replace(".",",") + ";;"
+        returnValue += str(self.netto).replace(".",",")
         return returnValue
         
     def fromCSV_String(self,string):
@@ -68,12 +68,30 @@ class accountingLine:
             self.date        = matches.group(1)
             self.label       = matches.group(2)
             self.field1      = matches.group(3)
-            self.total       = matches.group(4)
+            self.total       = matches.group(4).replace(",",".")
             self.account     = matches.group(5)
             self.ref_account = matches.group(6)
-            self.brutto      = matches.group(7)
-            self.VAT         = matches.group(8)
-            self.netto       = matches.group(9)
+            self.brutto      = matches.group(7).replace(",",".")
+            self.VAT         = matches.group(8).replace(",",".")
+            self.netto       = matches.group(9).replace(",",".")
+            if (self.brutto == ""):
+                self.brutto = 0.00
+            else:
+                pass
+
+            if (self.VAT == ""):
+                self.VAT = 0.00
+            else:
+                pass
+
+            if (self.netto == ""):
+                self.netto = 0.00
+            else:
+                pass
+
+            self.brutto = Decimal(float(str(self.brutto))).quantize(Decimal("0.01"))
+            self.VAT    = Decimal(float(str(self.VAT))).quantize(Decimal("0.01"))
+            self.netto  = Decimal(float(str(self.netto))).quantize(Decimal("0.01"))
         else:
             print("input line misformed (was " + string +" )")
             exit()
@@ -100,6 +118,7 @@ def condense(infileName, outfileName):
         56.78,\
         90.12,\
         34.56) # default initialization should be overwritten asap by algorithm only for defining an object of known type
+    lenghtOfFile = len(linesOfInfile)
     for line in linesOfInfile:
         currentAccountingLine = accountingLine("01.01.22",\
             "label",\
@@ -131,8 +150,7 @@ def condense(infileName, outfileName):
                 else:
                     pass
 
-                currentAccountingLine.brutto = float(str(currentAccountingLine.brutto).replace(",",".")) + float(str(previousAccountingLine.brutto).replace(",","."))
-                currentAccountingLine.brutto = Decimal(str(currentAccountingLine.brutto)).quantize(Decimal("0.01"))
+                currentAccountingLine.brutto = currentAccountingLine.brutto + previousAccountingLine.brutto
                 
                 if (currentAccountingLine.VAT == ""):
                     currentAccountingLine.VAT = 0.00
@@ -144,8 +162,7 @@ def condense(infileName, outfileName):
                 else:
                     pass
 
-                currentAccountingLine.VAT = float(str(currentAccountingLine.VAT).replace(",",".")) + float(str(previousAccountingLine.VAT).replace(",","."))
-                currentAccountingLine.VAT = Decimal(float(currentAccountingLine.VAT)).quantize(Decimal("0.01"))
+                currentAccountingLine.VAT = currentAccountingLine.VAT + previousAccountingLine.VAT
 
                 if (currentAccountingLine.netto == ""):
                     currentAccountingLine.netto = 0.00
@@ -157,8 +174,7 @@ def condense(infileName, outfileName):
                 else:
                     pass
 
-                currentAccountingLine.netto = float(str(currentAccountingLine.netto).replace(",",".")) + float(str(previousAccountingLine.netto).replace(",","."))
-                currentAccountingLine.netto = Decimal(float(currentAccountingLine.netto)).quantize(Decimal("0.01"))
+                currentAccountingLine.netto = currentAccountingLine.netto + previousAccountingLine.netto
                 previousAccountingLine = currentAccountingLine
             else:
                 if (previousAccountingLine != defaultInitializedAccountingLine):
