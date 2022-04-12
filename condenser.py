@@ -95,9 +95,10 @@ def condense(infileName, outfileName):
     defaultInitializedAccountingLine = accountingLine() 
     previousAccountingLine = accountingLine() 
     lengthOfFile = len(linesOfInfile)
-    for i in range(0,lengthOfFile):
+    i = 0
+    while i < lengthOfFile:
         currentAccountingLine = [accountingLine()] 
-        currentAccountingLine[0].fromCSV_String(linesOfInfile[i]) # fill the previously created currentaccountingLine object from the current line so that we can afterwards check if any fields are empty and then need to be reused from the previous line
+        currentAccountingLine[0].fromCSV_String(linesOfInfile[i]) 
         continueBuffering = 1
         numOfBufferedLines = 0
         while (
@@ -118,47 +119,31 @@ def condense(infileName, outfileName):
             else:
                 continueBuffering = 0
 
-        wasIndexConsidered = [0]*(numOfBufferedLines+1)
-        wasIndexConsidered[0] = 1 # the first entry is always considered since it will be kept if nothing else matches it
-        for j in range(0,numOfBufferedLines):
-            for k in range(j,numOfBufferedLines):
+
+        wasIndexMatched = [0]*(numOfBufferedLines+1)
+        wasIndexMatched[0] = 1 # the first entry is always matched since it will be kept if nothing else matches it
+        for j in range(0,numOfBufferedLines+1):
+            for k in range(j,numOfBufferedLines+1):
                 if (
                             (j != k)
-                        and (wasIndexConsidered[k] == 0)
-                        and (currentAccountingLine[j].date == currentAccountingLine)
+                        and (wasIndexMatched[k] == 0)
+                        and (currentAccountingLine[j].total == "")
+                        and (currentAccountingLine[j].account == currentAccountingLine[k].account)
+                        and (currentAccountingLine[j].ref_account == currentAccountingLine[k].ref_account)
                    ):
-                    pass #dummy
+                    currentAccountingLine[j].brutto += currentAccountingLine[k].brutto
+                    currentAccountingLine[j].netto += currentAccountingLine[k].netto
+                    currentAccountingLine[j].VAT += currentAccountingLine[k].VAT
+                    wasIndexMatched[k] = 1
                 else:
-                    pass #dummy
-
-        if (
-                    (currentAccountingLine.date == previousAccountingLine.date)
-                and (currentAccountingLine.label == previousAccountingLine.label)
-                and (currentAccountingLine.field1 == previousAccountingLine.field1)
-           ):
+                    pass 
             if (
-                        (currentAccountingLine.total == "")
-                    and (currentAccountingLine.account == previousAccountingLine.account)
-                    and (currentAccountingLine.ref_account == previousAccountingLine.ref_account)
+                       (j == 0)
+                    or (wasIndexMatched[j] == 0)
                ):
-                currentAccountingLine.brutto = currentAccountingLine.brutto + previousAccountingLine.brutto
-                
-                currentAccountingLine.VAT = currentAccountingLine.VAT + previousAccountingLine.VAT
-
-                currentAccountingLine.netto = currentAccountingLine.netto + previousAccountingLine.netto
-                previousAccountingLine = currentAccountingLine
-            else:
-                if (previousAccountingLine != defaultInitializedAccountingLine):
-                    outfile.write(previousAccountingLine.toCSV_String() + "\n")
-                else:
-                    pass
-                previousAccountingLine = currentAccountingLine
-        else:
-            if (previousAccountingLine != defaultInitializedAccountingLine):
-                outfile.write(previousAccountingLine.toCSV_String()+"\n")
-            else:
-                pass
-            previousAccountingLine = currentAccountingLine
+                outfile.write(currentAccountingLine[j].toCSV_String() + "\n")
+        
+        i += 1
 
 def main():
     if(len(sys.argv) != 3):
