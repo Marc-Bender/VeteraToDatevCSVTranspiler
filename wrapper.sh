@@ -1,15 +1,24 @@
 #! /usr/bin/bash
 
 infile=$1 # the raw unprocessed file to be converted
-outfile=$2 # the final import ready file
+accountsFile=$2 # translation file from text accounts to numeric accounts
+outfile=$3 # the final import ready file
 
 if [ -f "$infile" ];
 then
-	./preprocess.sh "$infile" > "pre_""$infile" &&
-	./completifier.py "pre_""$infile" "comp_""$infile" &&
-	rm "pre_""$infile" &&
-	./condenser.py "comp_""$infile" "cond_""$infile" &&
-	echo "Done" # place holder for next command
+	if [ -f "$accountsFile" ];
+	then
+		./preprocess.sh "$infile" > "pre_""$infile" &&
+		./completifier.py "pre_""$infile" "comp_""$infile" &&
+		rm "pre_""$infile" &&
+		./condenser.py "comp_""$infile" "cond_""$infile" &&
+		rm "comp_""$infile" &&
+		./preprocess.sh "$accountsFile" > "pre_""$accountsFile" &&
+		./makeNumeric.sh "cond_""$infile" "num_""$infile" &&
+		#rm "cond_""$infile" &&
+		echo "Done" # place holder for next command
+	else
+		echo "Accounts file does not exist"
 else
 	echo "Infile does not exist"
 fi	
