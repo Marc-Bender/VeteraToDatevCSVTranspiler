@@ -14,11 +14,12 @@ then
 		./condenser.py "comp_""$infile" "cond_""$infile" &&
 		rm "comp_""$infile" &&
 		./preprocess.sh "$accountsFile" > "pre_""$accountsFile" &&
-		./makeNumeric.sh "cond_""$infile" "num_""$infile" &&
-		#rm "cond_""$infile" &&
+		./makeNumeric.sh "cond_""$infile" "$accountsFile" "num_""$infile" &&
+		#rm "cond_""$infile" "pre_""$accountsFile" &&
 		echo "Done" # place holder for next command
 	else
 		echo "Accounts file does not exist"
+	fi
 else
 	echo "Infile does not exist"
 fi	
