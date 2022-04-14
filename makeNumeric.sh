@@ -7,8 +7,8 @@ then
 	if [ -f "$mkNum_accountsFile" ];
 	then
 		cat "$mkNum_accountsFile" |
-			sed "s/^/sed \"s\// " |
-			sed "s/;;/\//" |
+			sed "s/^/sed \"s\/;/ " |
+			sed "s/;;/\/;/" |
 			sed "s/$/\/g\"/" |
 			sed "s/$/ \|/" > "script_""$mkNum_accountsFile"".sh" &&
 				echo tee >> "script_""$mkNum_accountsFile"".sh" &&
