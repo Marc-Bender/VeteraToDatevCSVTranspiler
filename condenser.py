@@ -39,9 +39,9 @@ class accountingLine:
         regexTotal = "([0-9,]*)"
         regexAccount = "([^;]*)"
         regexRefAcc = "([^;]*)"
-        regexBrutto = "([0-9,]*)"
-        regexVAT = "([0-9,]*)"
-        regexNetto = "([0-9,]*)"
+        regexBrutto = "([-]{0,1}[0-9,]*)"
+        regexVAT = "([-]{0,1}[0-9,]*)"
+        regexNetto = "([-]{0,1}[0-9,]*)"
         
         regex = "^;;" + \
                 regexDate + ";"+\
