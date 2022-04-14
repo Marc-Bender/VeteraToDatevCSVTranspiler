@@ -14,8 +14,7 @@ then
 				echo tee >> "script_""$mkNum_accountsFile"".sh" &&
 				cat "$mkNum_infile" |
 					./"script_""$mkNum_accountsFile"".sh" > "$mkNum_outFile" &&
-				echo "done" # place holder for rm command
-				#rm "script_""$mkNum_accountsFile"".sh"
+				rm "script_""$mkNum_accountsFile"".sh"
 	else
 		echo Accountsfile not existing
 	fi
