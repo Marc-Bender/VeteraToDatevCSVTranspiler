@@ -127,6 +127,15 @@ def completify(infileName, outfileName):
             currentAccountingLine.label = previousAccountingLine.label
             currentAccountingLine.field1 = previousAccountingLine.field1
             currentAccountingLine.total = ""
+            if currentAccountingLine.ref_account != "":
+                 matcherBraces = re.compile("(.*) \(.*\)").match(currentAccountingLine.label)
+                 if matcherBraces:
+                     currentAccountingLine.label = matcherBraces.group(1) + " ( " + currentAccountingLine.ref_account + " ) "
+                 else:
+                     pass
+            else:
+                 pass
+
         outfile.write(currentAccountingLine.toCSV_String()+"\n")
 
 def main():
@@ -179,13 +188,16 @@ main() # use call to main in production anything else otherwise
 #       56.78,\
 #       90.12,\
 #       34.56)
-#line.fromCSV_String(";;03.01.2022;Musterfrau, Marianne, Musterhausen, 17155/03.01.2022 (MED_ABG_0% );;171552;28,62;;;;;;")
+#line.fromCSV_String(";;03.01.2022;Musterfrau, Marianne, Musterhausen, 17155/03.01.2022 (MED_ABG_0% );;171552;28,62;Forderung;MED_ABG_19%;;;;")
 #print("date = " + line.date)
 #print("label = " + line.label)
+#print("ref_account = " + line.ref_account)
+#line.label = re.compile("(.*) \(.*\)").match(line.label).group(1) + " ( " + line.ref_account + " ) "
+#print("newLabel = " + line.label)
 #print("field1 = " + line.field1)
 #print("total = " + line.total)
 #print("account = " + line.account)
-#print("ref_account = " + line.ref_account)
+
 #print("brutto = " + line.brutto)
 #print("VAT = " + line.VAT)
 #print("netto = " + line.netto)

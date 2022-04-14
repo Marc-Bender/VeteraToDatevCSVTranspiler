@@ -88,6 +88,13 @@ class accountingLine:
             print("input line misformed (was " + string +" )")
             exit()
 
+def field1_to_debitor(field1):
+    matcher = re.compile("([0-9])[0-9]([0-9]*)").match(field1)
+    if matcher:
+        return matcher.group(1) + matcher.group(2)
+    else:
+        return field1 # can not convert b/c input value is misformed
+
 def condense(infileName, outfileName):
     infile = open(infileName,"r")
     outfile = open(outfileName, "w")
@@ -141,6 +148,17 @@ def condense(infileName, outfileName):
                        (j == 0)
                     or (wasIndexMatched[j] == 0)
                ):
+
+                if currentAccountingLine[j].account == "Forderungen":
+                    currentAccountingLine[j].account = field1_to_debitor(currentAccountingLine[j].field1)
+                else:
+                    pass
+                
+                if currentAccountingLine[j].ref_account == "Forderungen":
+                    currentAccountingLine[j].ref_account = field1_to_debitor(currentAccountingLine[j].field1)
+                else:
+                    pass
+
                 outfile.write(currentAccountingLine[j].toCSV_String() + "\n")
         
         i += 1
